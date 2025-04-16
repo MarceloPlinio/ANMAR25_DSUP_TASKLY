@@ -8,22 +8,22 @@ datasource db {
 }
 
 model Task {
-  id          Int       @id @default(autoincrement())
+  id          String   @id @default(uuid())
   title       String
-  description String?
-  status      String    
-  priority    Int
-  category    String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  description String
+  status      String
+  priority    String
+  category    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   notes       Note[]
 }
 
 model Note {
-  id        Int       @id @default(autoincrement())
+  id        String   @id @default(uuid())
   content   String
-  taskId    Int
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  task      Task      @relation(fields: [taskId], references: [id])
+  taskId    String
+  task      Task     @relation(fields: [taskId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
