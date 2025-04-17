@@ -1,18 +1,13 @@
-# Node modules
 node_modules/
 
-# Arquivos de compilação do TypeScript
 /dist/
 build/
 
-# Arquivos de configuração do VSCode
 .vscode/
 
-# Arquivos de log
 *.log
 
-# Arquivos do sistema
-Thumbs.db          # Para Windows
+Thumbs.db          
 
-# Arquivo de ambiente local
+
 .env
