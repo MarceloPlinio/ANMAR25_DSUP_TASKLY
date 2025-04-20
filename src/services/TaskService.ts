@@ -41,15 +41,6 @@ class TaskService {
     }
   }
 
-  static async getTasksByStatus(status: string): Promise<Task[]> {
-    try {
-      const tasks = await TaskRepository.findByStatus(status);
-      return tasks;
-    } catch (error) {
-      throw new Error("Error fetching tasks by status");
-    }
-  }
-
   static async getTasksWithFilters(params: {
     page?: number;
     limit?: number;
@@ -63,30 +54,30 @@ class TaskService {
 
       if (category) {
         where.category = {
-          contains: category,
-          mode: "insensitive",
+          contains: category.toLowerCase()
         };
       }
-
+      
       if (search) {
         where.OR = [
           {
             title: {
-              contains: search,
-              mode: "insensitive",
-            },
+              contains: search.toLowerCase() 
+            }
           },
           {
             description: {
-              contains: search,
-              mode: "insensitive",
-            },
-          },
+              contains: search.toLowerCase()
+            }
+          }
         ];
       }
 
-      const totalCount = await TaskRepository.count(where);
-      const totalPages = Math.ceil(totalCount / limit);
+      
+      const totalCount = await TaskRepository.count(where); 
+
+ 
+      const totalPages = Math.ceil(totalCount/ limit);
 
       if (totalPages > 0 && page > totalPages) {
         throw new Error(
@@ -113,6 +104,15 @@ class TaskService {
       } else {
         throw new Error("Error fetching tasks with filters");
       }
+    }
+  }
+
+  static async getTasksByStatus(status: string): Promise<Task[]> {
+    try {
+      const tasks = await TaskRepository.findByStatus(status);
+      return tasks;
+    } catch (error) {
+      throw new Error("Error fetching tasks by status");
     }
   }
 
