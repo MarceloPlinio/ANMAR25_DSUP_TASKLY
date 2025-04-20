@@ -57,10 +57,62 @@ class TaskService {
     search?: string;
   }) {
     try {
-      const tasks = await TaskRepository.findAllWithFilters(params);
-      return tasks;
+      const { page = 1, limit = 10, category, search } = params;
+
+      const where: any = {};
+
+      if (category) {
+        where.category = {
+          contains: category,
+          mode: "insensitive",
+        };
+      }
+
+      if (search) {
+        where.OR = [
+          {
+            title: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+          {
+            description: {
+              contains: search,
+              mode: "insensitive",
+            },
+          },
+        ];
+      }
+
+      const totalCount = await TaskRepository.count(where);
+      const totalPages = Math.ceil(totalCount / limit);
+
+      if (totalPages > 0 && page > totalPages) {
+        throw new Error(
+          `Page ${page} does not exist. Only pages 1 to ${totalPages} are available.`
+        );
+      }
+
+      const tasks = await TaskRepository.findAllWithFilters({
+        page,
+        limit,
+        category,
+        search,
+      });
+
+      return {
+        tasks,
+        currentPage: page,
+        totalPages,
+        totalItems: totalCount,
+      };
     } catch (error) {
-      throw new Error("Error fetching tasks with filters");
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      } else {
+        throw new Error("Error fetching tasks with filters");
+      }
     }
   }
 
