@@ -86,11 +86,22 @@ class TaskService {
       }
 
       const tasks = await TaskRepository.findAllWithFilters({
+        
         page,
         limit,
         category,
         search,
       });
+      
+      if (tasks.length === 0) {
+        return {
+          message: "No tasks found with the given filters.",
+          tasks: [],
+          currentPage: page,
+          totalPages,
+          totalItems: totalCount,
+        };
+      }
 
       return {
         tasks,
