@@ -80,6 +80,10 @@ class TaskRepository {
 
     return tasks;
   }
+
+  async count(where: any) {
+    return await prisma.task.count({ where });
+  }
 }
 
 export default new TaskRepository();
