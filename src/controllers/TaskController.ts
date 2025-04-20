@@ -36,7 +36,11 @@ class TaskController {
       res.status(200).json(tasks);
       return;
     } catch (error) {
-      res.status(500).json({ message: "Error fetching tasks with filters" });
+      if (error instanceof Error && error.message.includes("Page")) {
+        res.status(400).json({ message: error.message });
+      } else {
+        res.status(500).json({ message: "Error fetching tasks with filters" });
+      }
       return;
     }
   }
