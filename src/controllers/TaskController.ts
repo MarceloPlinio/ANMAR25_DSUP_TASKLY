@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import TaskService from '../services/TaskService';
+import { Request, Response } from "express";
+import TaskService from "../services/TaskService";
 
 class TaskController {
   async create(req: Request, res: Response) {
@@ -8,7 +8,7 @@ class TaskController {
     try {
       const newTask = await TaskService.createTask({
         title,
-        description,
+        description: description || null,
         category,
         priority,
         status,
@@ -17,22 +17,29 @@ class TaskController {
       res.status(201).json(newTask);
       return;
     } catch (error) {
-      res.status(500).json({ message: 'Error creating task' });
+      res.status(500).json({ message: "Error creating task" });
       return;
     }
   }
 
   async findAll(req: Request, res: Response) {
+    const { page, limit, category, search } = req.query;
+
     try {
-      const tasks = await TaskService.getAllTasks();
+      const tasks = await TaskService.getTasksWithFilters({
+        page: Number(page) || 1,
+        limit: Number(limit) || 10,
+        category: category as string | undefined,
+        search: search as string | undefined,
+      });
+
       res.status(200).json(tasks);
       return;
     } catch (error) {
-      res.status(500).json({ message: 'Error fetching tasks' });
+      res.status(500).json({ message: "Error fetching tasks with filters" });
       return;
     }
   }
-
   async findById(req: Request, res: Response) {
     const { id } = req.params;
 
@@ -40,19 +47,18 @@ class TaskController {
       const task = await TaskService.getTaskById(Number(id));
 
       if (!task) {
-        res.status(404).json({ message: 'Task not found' });
+        res.status(404).json({ message: "Task not found" });
         return;
       }
 
       res.status(200).json(task);
       return;
     } catch (error) {
-      res.status(500).json({ message: 'Error fetching task by id' });
+      res.status(500).json({ message: "Error fetching task by id" });
       return;
     }
   }
 
- 
   async findByStatus(req: Request, res: Response) {
     const { status } = req.params;
 
@@ -60,19 +66,18 @@ class TaskController {
       const tasks = await TaskService.getTasksByStatus(status);
 
       if (tasks.length === 0) {
-        res.status(404).json({ message: 'No tasks found with this status' });
+        res.status(404).json({ message: "No tasks found with this status" });
         return;
       }
 
       res.status(200).json(tasks);
       return;
     } catch (error) {
-      res.status(500).json({ message: 'Error fetching tasks by status' });
+      res.status(500).json({ message: "Error fetching tasks by status" });
       return;
     }
   }
 
- 
   async update(req: Request, res: Response) {
     const { id } = req.params;
     const { title, description, category, priority, status } = req.body;
@@ -87,14 +92,14 @@ class TaskController {
       });
 
       if (!updatedTask) {
-        res.status(404).json({ message: 'Task not found for update' });
+        res.status(404).json({ message: "Task not found for update" });
         return;
       }
 
       res.status(200).json(updatedTask);
       return;
     } catch (error) {
-      res.status(500).json({ message: 'Error updating task' });
+      res.status(500).json({ message: "Error updating task" });
       return;
     }
   }
@@ -106,14 +111,14 @@ class TaskController {
       const deletedTask = await TaskService.deleteTask(Number(id));
 
       if (!deletedTask) {
-        res.status(404).json({ message: 'Task not found for deletion' });
+        res.status(404).json({ message: "Task not found for deletion" });
         return;
       }
 
       res.status(204).send();
       return;
     } catch (error) {
-      res.status(500).json({ message: 'Error deleting task' });
+      res.status(500).json({ message: "Error deleting task" });
       return;
     }
   }
