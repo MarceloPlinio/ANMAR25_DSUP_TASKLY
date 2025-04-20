@@ -1,4 +1,5 @@
 import { prisma } from "../config/database";
+import { Prisma} from '@prisma/client';
 
 class TaskRepository {
   async create(data: any) {
@@ -50,7 +51,7 @@ class TaskRepository {
     if (category) {
       where.category = {
         contains: category,
-        mode: "insensitive",
+  
       };
     }
 
@@ -59,31 +60,40 @@ class TaskRepository {
         {
           title: {
             contains: search,
-            mode: "insensitive",
           },
         },
         {
           description: {
             contains: search,
-            mode: "insensitive",
           },
         },
       ];
     }
 
-    const tasks = await prisma.task.findMany({
-      where,
-      include: { notes: true },
-      skip: (page - 1) * limit,
-      take: limit,
-    });
+    try {
+      const tasks = await prisma.task.findMany({
+        where,
+        include: { notes: true },
+        skip: (page - 1) * limit,
+        take: limit,
+      });
 
-    return tasks;
+      return tasks;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Error fetching tasks with filters");
+    }
   }
 
-  async count(where: any) {
-    return await prisma.task.count({ where });
+  async count(where: any): Promise<number> {
+    try {
+      return await prisma.task.count({
+        where: where 
+      });
+    } catch (error) {
+      throw new Error("Error counting tasks");
+    }
   }
-}
+}  
 
 export default new TaskRepository();
