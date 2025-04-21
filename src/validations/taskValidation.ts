@@ -29,7 +29,7 @@ const normalize = (value: string) =>
     .replace(/\s+/g, " ")
     .trim();
 
-const textField = (
+export const textField = (
   min: number,
   max: number,
   fieldName: string,
@@ -56,14 +56,15 @@ const textField = (
     .refine(
       (val) => {
         if (allowEmoji) {
-          return /[\p{L}]/u.test(val);
+          return /^[\p{L}\p{M}\s.,!?'"()\-]+$/u.test(val); 
         }
-        return /^[\p{L}\p{M}\s]+$/u.test(val);
+        return /^[\p{L}\p{M}\s.,!?'"()\-]+$/u.test(val); 
       },
       {
         message: `${fieldName} must contain valid characters`,
       }
-    );
+    )
+    
 
 export const createTaskSchema = z.object({
   title: textField(3, 30, "Title", true),

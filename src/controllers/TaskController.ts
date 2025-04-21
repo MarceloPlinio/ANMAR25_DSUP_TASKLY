@@ -97,7 +97,6 @@ class TaskController {
     try {
       const updatedTask = await TaskService.updateTask(Number(id), parsed.data);
     
-
       if (!updatedTask) {
         res.status(404).json({ message: "Task not found for update" });
         return;
