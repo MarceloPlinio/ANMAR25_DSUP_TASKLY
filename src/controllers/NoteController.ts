@@ -16,8 +16,14 @@ class NoteController {
 
   static async findByTaskId(req: Request, res: Response) {
     const { taskId } = req.params;
-
+  
     try {
+      const taskExists = await NoteService.checkIfTaskExists(Number(taskId));
+      if (!taskExists) {
+        res.status(404).json({ message: "Task not found" });
+        return;
+      }
+  
       const notes = await NoteService.getNotesByTaskId(Number(taskId));
       res.status(200).json(notes);
     } catch (error) {
