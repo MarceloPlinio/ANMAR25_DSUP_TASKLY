@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import TaskService from "../services/TaskService";
+import { updateTaskSchema } from "../validations/taskValidation";
+
 
 class TaskController {
   async create(req: Request, res: Response) {
@@ -23,7 +25,7 @@ class TaskController {
   }
 
   async findAll(req: Request, res: Response) {
-    const { page, limit, category, search } = req.query;
+    const { page, limit, category, search, status } = req.query;
 
     try {
       const tasks = await TaskService.getTasksWithFilters({
@@ -31,12 +33,17 @@ class TaskController {
         limit: Number(limit) || 10,
         category: category as string | undefined,
         search: search as string | undefined,
+        status: status as string | undefined,
       });
 
       res.status(200).json(tasks);
       return;
     } catch (error) {
-      res.status(500).json({ message: "Error fetching tasks with filters" });
+      if (error instanceof Error && error.message.includes("Page")) {
+        res.status(400).json({ message: error.message });
+      } else {
+        res.status(500).json({ message: "Error fetching tasks with filters" });
+      }
       return;
     }
   }
@@ -80,16 +87,16 @@ class TaskController {
 
   async update(req: Request, res: Response) {
     const { id } = req.params;
-    const { title, description, category, priority, status } = req.body;
 
+    const parsed = updateTaskSchema.safeParse(req.body);
+    if (!parsed.success) {
+     res.status(400).json({ errors: parsed.error.format() });
+     return
+    }
+    
     try {
-      const updatedTask = await TaskService.updateTask(Number(id), {
-        title,
-        description,
-        category,
-        priority,
-        status,
-      });
+      const updatedTask = await TaskService.updateTask(Number(id), parsed.data);
+    
 
       if (!updatedTask) {
         res.status(404).json({ message: "Task not found for update" });
