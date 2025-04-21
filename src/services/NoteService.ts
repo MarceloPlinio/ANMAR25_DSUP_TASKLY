@@ -1,4 +1,5 @@
 import NoteRepository from "../repositories/NoteRepository";
+import { prisma } from "../config/database";
 
 class NoteService {
   static async createNote(taskId: number, content: string) {
@@ -9,6 +10,12 @@ class NoteService {
     return await NoteRepository.findByTaskId(taskId);
   }
 
+  static async checkIfTaskExists(taskId: number): Promise<boolean> {
+    const task = await prisma.task.findUnique({
+      where: { id: taskId },
+    });
+    return !!task;
+  }
   static async getNoteById(id: number) {
     return await NoteRepository.findById(id);
   }
