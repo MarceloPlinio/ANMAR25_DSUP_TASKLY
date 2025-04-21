@@ -46,38 +46,36 @@ class TaskService {
     limit?: number;
     category?: string;
     search?: string;
+    status?: string;
   }) {
     try {
-      const { page = 1, limit = 10, category, search } = params;
+      const { page = 1, limit = 10, category, search, status } = params;
 
       const where: any = {};
 
       if (category) {
-        where.category = {
-          contains: category.toLowerCase()
-        };
+        where.category = { contains: category.toLowerCase() };
       }
-      
+
       if (search) {
         where.OR = [
-          {
-            title: {
-              contains: search.toLowerCase() 
-            }
-          },
-          {
-            description: {
-              contains: search.toLowerCase()
-            }
-          }
+          { title: { contains: search.toLowerCase() } },
+          { description: { contains: search.toLowerCase() } },
         ];
       }
 
-      
-      const totalCount = await TaskRepository.count(where); 
+      if (status) {
+        const normalizedStatus = status.toUpperCase();
+        if (
+          ["TO_DO", "DONE", "IN_PROGRESS", "BLOCKED"].includes(normalizedStatus)
+        ) {
+          where.status = normalizedStatus;
+        }
+      }
 
- 
-      const totalPages = Math.ceil(totalCount/ limit);
+      const totalCount = await TaskRepository.count(where);
+
+      const totalPages = Math.ceil(totalCount / limit);
 
       if (totalPages > 0 && page > totalPages) {
         throw new Error(
@@ -86,13 +84,13 @@ class TaskService {
       }
 
       const tasks = await TaskRepository.findAllWithFilters({
-        
         page,
         limit,
         category,
         search,
+        status: where.status,
       });
-      
+
       if (tasks.length === 0) {
         return {
           message: "No tasks found with the given filters.",
@@ -110,11 +108,7 @@ class TaskService {
         totalItems: totalCount,
       };
     } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(error.message);
-      } else {
-        throw new Error("Error fetching tasks with filters");
-      }
+      throw new Error("Error fetching tasks with filters");
     }
   }
 
