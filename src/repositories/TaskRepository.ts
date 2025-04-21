@@ -1,5 +1,5 @@
 import { prisma } from "../config/database";
-import { Prisma} from '@prisma/client';
+import { Prisma } from "@prisma/client";
 
 class TaskRepository {
   async create(data: any) {
@@ -43,15 +43,15 @@ class TaskRepository {
     limit?: number;
     category?: string;
     search?: string;
+    status?: string;
   }) {
-    const { page = 1, limit = 10, category, search } = params;
+    const { page = 1, limit = 10, category, search, status } = params;
 
     const where: any = {};
 
     if (category) {
       where.category = {
         contains: category,
-  
       };
     }
 
@@ -68,6 +68,10 @@ class TaskRepository {
           },
         },
       ];
+    }
+
+    if (status) {
+      where.status = status;
     }
 
     try {
@@ -88,12 +92,12 @@ class TaskRepository {
   async count(where: any): Promise<number> {
     try {
       return await prisma.task.count({
-        where: where 
+        where: where,
       });
     } catch (error) {
       throw new Error("Error counting tasks");
     }
   }
-}  
+}
 
 export default new TaskRepository();
