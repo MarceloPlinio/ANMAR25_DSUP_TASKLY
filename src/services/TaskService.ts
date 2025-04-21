@@ -78,9 +78,9 @@ class TaskService {
       const totalPages = Math.ceil(totalCount / limit);
 
       if (totalPages > 0 && page > totalPages) {
-        throw new Error(
-          `Page ${page} does not exist. Only pages 1 to ${totalPages} are available.`
-        );
+        return {
+          error: `Page ${page} does not exist. Only pages 1 to ${totalPages} are available.`,
+        };
       }
 
       const tasks = await TaskRepository.findAllWithFilters({

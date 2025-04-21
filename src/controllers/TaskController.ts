@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import TaskService from "../services/TaskService";
+import { updateTaskSchema } from "../validations/taskValidation";
+
 
 class TaskController {
   async create(req: Request, res: Response) {
@@ -85,16 +87,16 @@ class TaskController {
 
   async update(req: Request, res: Response) {
     const { id } = req.params;
-    const { title, description, category, priority, status } = req.body;
 
+    const parsed = updateTaskSchema.safeParse(req.body);
+    if (!parsed.success) {
+     res.status(400).json({ errors: parsed.error.format() });
+     return
+    }
+    
     try {
-      const updatedTask = await TaskService.updateTask(Number(id), {
-        title,
-        description,
-        category,
-        priority,
-        status,
-      });
+      const updatedTask = await TaskService.updateTask(Number(id), parsed.data);
+    
 
       if (!updatedTask) {
         res.status(404).json({ message: "Task not found for update" });

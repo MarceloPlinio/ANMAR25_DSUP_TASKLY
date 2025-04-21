@@ -94,3 +94,17 @@ export const createTaskSchema = z.object({
       }
     ),
 });
+
+export const updateTaskSchema = createTaskSchema.partial().extend({
+  status: z
+    .string()
+    .transform((status) => status.toUpperCase())
+    .refine(
+      (status) => Object.values(TaskStatus).includes(status as TaskStatus),
+      {
+        message:
+          "Status must be one of the predefined values: TO_DO, IN_PROGRESS, DONE",
+      }
+    ),
+});
+
