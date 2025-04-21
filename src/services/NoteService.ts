@@ -22,20 +22,33 @@ class NoteService {
 
   static async updateNote(id: number, content: string) {
     const note = await prisma.note.findUnique({
-      where: { id }
+      where: { id },
     });
-  
+
     if (!note) {
-      return null; 
+      return null;
     }
-  
+
     return await prisma.note.update({
       where: { id },
-      data: { content }
+      data: { content },
     });
   }
+
   static async deleteNote(id: number) {
-    return await NoteRepository.delete(id);
+    const note = await prisma.note.findUnique({
+      where: { id },
+    });
+
+    if (!note) {
+      return false;
+    }
+
+    await prisma.note.delete({
+      where: { id },
+    });
+
+    return true;
   }
 }
 
