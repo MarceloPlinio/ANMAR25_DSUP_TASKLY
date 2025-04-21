@@ -41,9 +41,16 @@ class TaskRepository {
   
 
   async delete(id: number) {
-    return await prisma.task.delete({
-      where: { id },
-    });
+    try {
+      return await prisma.task.delete({
+        where: { id },
+      });
+    } catch (error: any) {
+      if (error.code === 'P2025') {
+        return null; 
+      }
+      throw error;
+    }
   }
 
   async findAllWithFilters(params: {
