@@ -26,11 +26,19 @@ class TaskRepository {
   }
 
   async update(id: number, data: any) {
-    return await prisma.task.update({
-      where: { id },
-      data,
-    });
+    try {
+      return await prisma.task.update({
+        where: { id },
+        data,
+      });
+    } catch (error: any) {
+      if (error.code === 'P2025') {
+        return null; 
+      }
+      throw error; 
+    }
   }
+  
 
   async delete(id: number) {
     return await prisma.task.delete({
