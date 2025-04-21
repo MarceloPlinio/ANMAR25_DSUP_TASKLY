@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { TaskStatus } from "../constants/taskStatus";
 
 const forbiddenWords = [
   "SELECT",
@@ -81,5 +82,15 @@ export const createTaskSchema = z.object({
     .optional(),
   category: textField(3, 20, "Category"),
   priority: textField(3, 15, "Priority"),
-  status: textField(3, 15, "Status"),
+
+  status: z
+    .string()
+    .transform((status) => status.toUpperCase())
+    .refine(
+      (status) => Object.values(TaskStatus).includes(status as TaskStatus),
+      {
+        message:
+          "Status must be one of the predefined values: TO_DO, IN_PROGRESS, DONE",
+      }
+    ),
 });
