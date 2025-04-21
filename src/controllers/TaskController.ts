@@ -23,7 +23,7 @@ class TaskController {
   }
 
   async findAll(req: Request, res: Response) {
-    const { page, limit, category, search } = req.query;
+    const { page, limit, category, search, status } = req.query;
 
     try {
       const tasks = await TaskService.getTasksWithFilters({
@@ -31,6 +31,7 @@ class TaskController {
         limit: Number(limit) || 10,
         category: category as string | undefined,
         search: search as string | undefined,
+        status: status as string | undefined,
       });
 
       res.status(200).json(tasks);
