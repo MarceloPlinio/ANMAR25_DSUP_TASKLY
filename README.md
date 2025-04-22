@@ -15,7 +15,7 @@ This project involves the development of RESTful APIs for task management, encom
 | SQLite3            | ^5.1.7     |
 | Prisma             | ^6.6.0     |
 | @prisma/client     | ^6.6.0     |
-| Zod                | ^3.24.3    |
+| Zod                | ^3.24.3    | 
 | ts-node-dev        | ^2.0.0     |
 | cors               | ^2.8.5     |
 | dotenv             | ^16.5.0    |
@@ -24,8 +24,16 @@ This project involves the development of RESTful APIs for task management, encom
 | @types/express     | ^5.0.1     |
 
 > **Note:** This project was built using Node.js v20. It's recommended to use the same version or newer to ensure compatibility.
+Documentation links:
+ 
+>Zod: https://zod.dev |
+>Prisma: https://www.prisma.io/docs/orm |
+>Express: https://expressjs.com/pt-br/guide/routing.html
 
 ## Use Postman or Insomnia to test and observe the API's functionality. ✅
+> ### https://www.postman.com/downloads/
+
+> ### https://insomnia.rest/download
 ---
 
 ## 📦 Installation & Setup
@@ -87,7 +95,7 @@ DATABASE_URL="file:./dev.db"
 
 - Base URL: [http://localhost:3000](http://localhost:3000)
 
-### Create new task card
+### 🔶 Create new task card
 
 ```http
 POST /tasks
@@ -146,7 +154,7 @@ This endpoint allows you to add a new task.
 
 
 
-### List all task cards
+### 🔶 List all task cards
 
 ```http
 GET /tasks 
@@ -188,13 +196,11 @@ This request does not require a request body.
 ![image](https://github.com/user-attachments/assets/f82a3393-412a-463f-832c-67c751212bce)
 
 
-### Fetch tasks by status
+### 🔶 Get tasks by status
 
 ```http
 GET /tasks/status/:status 
 ```
-
-### Get Tasks by Status
 
 This endpoint retrieves tasks with the specified status. (TO_DO, IN_PROGRESS AND DONE)
 
@@ -211,7 +217,7 @@ The response is in JSON format and will have the following schema:
 ![image](https://github.com/user-attachments/assets/2be37786-f636-42e9-baac-14b32f1b1cbb)
 
 
-### Update task card
+### 🔶 Update task card
 ```http
 PUT /tasks/:id 
 ```
@@ -235,7 +241,7 @@ The response will be in JSON format with the following schema:
 ![image](https://github.com/user-attachments/assets/497304ce-d073-4b7d-a1ed-4867d96db90a)
 
 
-### Delete task card
+### 🔶 Delete task card
 
 ```http
 DELETE /tasks/:id 
@@ -259,7 +265,7 @@ The response for this request is a 204 status code with no content. As per the u
 
 ## 🗒️ Notes API
 
-### Create new note
+### 🔷 Create new note
 ```http
 POST /tasks/:taskId/notes 
 ```
@@ -277,13 +283,11 @@ The response will be in JSON format with the following schema:
 ![image](https://github.com/user-attachments/assets/630c5f3e-f5ab-499e-a59b-951986915a1b)
 
 
-### List task notes
+### 🔷 List task notes
 
 ```http
 GET /tasks/:taskId/notes 
 ```
-
-### GET /tasks/id/notes
 
 This endpoint retrieves the notes associated with the task with ID.
 
@@ -309,7 +313,7 @@ The response will be a JSON array containing objects with the following properti
 
 
 
-### Fetch specific note
+### 🔷 Fetch specific note
 ```http
 GET /notes/:id  
 ```
@@ -337,7 +341,7 @@ This endpoint does not require a request body.
 ![image](https://github.com/user-attachments/assets/70a8aede-750a-4cf0-8f4d-671de3c2a1b8)
 
 
-### Update note
+### 🔷 Update note
 
 ```http
 PUT /notes/:id 
@@ -358,7 +362,7 @@ Upon a successful update, the endpoint returns a status code of 200 and a JSON o
 ![image](https://github.com/user-attachments/assets/846c8858-67d7-4709-a30b-b98ebc5b00f6)
 
 
-### Delete note
+### 🔷 Delete note
 ```http
 DELETE /notes/:id 
 ```
